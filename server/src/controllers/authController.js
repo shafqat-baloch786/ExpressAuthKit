@@ -39,6 +39,41 @@ const register = asyncWrapper(async (req, res, next) => {
 });
 
 
+// Login
+const login = asyncWrapper(async (req, res, next) => {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+
+    // If user not found, show error message
+    if(!user) {
+        return next (new ErrorHandler("User not found!", 404));
+    }
+
+    // Else, compare the password
+    const isPasswordMatched = await user.comparePassword(password);
+    if(!isPasswordMatched) {
+        return next (new ErrorHandler("Invalid credentials!", 404));
+    }
+
+    // Generate token
+    const token = generateToken(user.id);
+
+    // Return the user and show success response
+    return res.status(200).json({
+        success: true,
+        message: "User found sucessfully!",
+        token,
+        user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            avatar: user.avatar,
+        }
+    })
+});
+
+
 module.exports = {
     register,
+    login,
 }

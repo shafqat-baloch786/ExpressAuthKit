@@ -5,6 +5,7 @@ const cors = require('cors');
 const errorMiddleware = require('./middlewares/errorHandler');
 
 const authRoute = require('./routes/authRoute');
+const userRoute = require('./routes/userRoute');
 
 // HTTP headers for security
 app.use(helmet());
@@ -18,6 +19,9 @@ app.use(express.urlencoded({ extended: true })); // parse form data
 
 // Auth route
 app.use('/api/auth', authRoute);
+
+// User route
+app.use('/api', userRoute);
 
 
 // error middleware
